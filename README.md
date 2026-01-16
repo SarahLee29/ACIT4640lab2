@@ -12,6 +12,14 @@ create the environment variable file:
 
 `nano env-vars.sh`
 
+write the following variables:
+
+```
+USERAME="admin"
+IP_ADDRESS="0.0.0.0"
+SSH_KEY_PATH="/home/SarahLinux/.ssh/wkone"
+```
+
 ### script 1
 
 create the script 1 file:
