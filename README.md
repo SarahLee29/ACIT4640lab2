@@ -47,7 +47,7 @@ sudo apt install -y nginx
 sudo systemctl start nginx
 
 #make nginx start when the instance is boot up
-sudo systemctl enable ngin
+sudo systemctl enable nginx
 EOF
 ```
 
@@ -71,16 +71,7 @@ write the below commands:
 source ./env_vars.sh
 
 #set up today variable to get the current date
-today=$(date+"%d/%m/%Y")
-
-#write a new html doc
-#!/bin/bash
-
-#load environment variables
-source ./env_vars.sh
-
-#set up today variable to get the current date
-today=$(date+"%d/%m/%Y")
+today=$( date +"%d/%m/%Y")
 
 #write a new html doc
 echo "<!DOCTYPE html>
@@ -97,13 +88,22 @@ echo "<!DOCTYPE html>
 </html>" > index.html
 
 #copy the html file to EC2 instance
+scp -i "$SSH_KEY_PATH" index.html "$USERNAME@$IP_ADDRESS:/tmp/index.html"
 
-ssh -i "SSH_KEY_PATH" "$USERNAME@$IP_ADDRESS" << 'EOF'
-    # Backup original nginx html file
-    sudo mv /var/www/html/index.html /var/www/html/index.html.bak
 
-    # Move the html file from /tmp to the nginx folder
-    sudo mv /tmp/index.html /var/www/html/index.html
+
+ssh -i "$SSH_KEY_PATH" "$USERNAME@$IP_ADDRESS" << EOF
+	#backup original nginx html file
+	sudo mv /var/www/html/index.html /var/www/html/index.html.bak
+	
+	echo "current index:"
+	cat /var/www/html/index.html
+
+	echo "expected index"
+	cat /tmp/index.html
+
+	#move the html file we generated above to nginx folder
+	sudo mv /tmp/index.html /var/www/html/index.html
 EOF
 ```
 
